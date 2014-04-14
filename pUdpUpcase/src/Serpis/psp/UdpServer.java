@@ -6,14 +6,18 @@ import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.*;
+import java.text.*;
 
 public class UdpServer {
 
 	private static final int MaxPaquetSize = 2048; 
 	private static final int PORT = 12345;
-	private static final String CALENDAR_FORMAT = "%1$tF %1$tT UTC";
+	public static Date now = new Date();
+	public static DateFormat df = DateFormat.getDateInstance();
+	public static DateFormat hf = new SimpleDateFormat("HH:mm:ss");
+	public static String dateNow = df.format(now);
+	public static String hourNow = hf.format(now);
 	public static void main(String[] args) throws IOException {
 		
 
@@ -26,7 +30,7 @@ public class UdpServer {
 			socket.receive(inDatagramPacket);
 			String inMessage = new String(inBuf, 0, inDatagramPacket.getLength());
 			
-			String outMessage = CALENDAR_FORMAT;
+			String outMessage = dateNow + " " + hourNow;
 			byte[] outBuf = outMessage.getBytes();
 			int outLength = outBuf.length;
 			InetAddress outInetAddress = inDatagramPacket.getAddress();
