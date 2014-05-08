@@ -1,32 +1,49 @@
 package Serpis.psp;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-
-
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+ 
+import javax.net.ssl.HttpsURLConnection;
+ 
 public class UdpClient {
-	static final int MaxPaquetSize = 2048;
-	private static final String hostServer="localhost";
-	private static final int SERVER_PORT =12345;
-	public static void main(String[] args) throws IOException {
 
-		DatagramSocket  socket = new DatagramSocket();
+ 
+	public static void main(String[] args) throws Exception {
+ 
+		UdpClient http = new UdpClient();
+ 
+		http.sendGet();
+ 
+	}
+ 
+	private void sendGet() throws Exception {
+ 
+		String url = "http://www.google.com";
+ 
+		URL obj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+ 
+		con.setRequestMethod("GET");
 
-		String mensaje ="hola udp";
-		System.out.println(mensaje);
-		byte [] outbuf = mensaje.getBytes();
-		InetAddress host = InetAddress.getByName(hostServer);
-		DatagramPacket outDatagramPacket = new DatagramPacket(outbuf,outbuf.length,host,SERVER_PORT); 
-		socket.send(outDatagramPacket);
-
-		byte[] inBuf = new byte [MaxPaquetSize];
-		DatagramPacket inDatagramPacket= new DatagramPacket(inBuf, inBuf.length); 
-		socket.receive(inDatagramPacket);
-		String inMessage = new String(inBuf,0,inDatagramPacket.getLength());
-		System.out.println(inMessage);
-
-		socket.close();
+ 
+		int responseCode = con.getResponseCode();
+		System.out.println("Enviando direccion URL: " + url);
+		System.out.println("Pagina web : " + responseCode);
+ 
+		BufferedReader in = new BufferedReader(
+		        new InputStreamReader(con.getInputStream()));
+		String inputLine;
+		StringBuffer response = new StringBuffer();
+ 
+		while ((inputLine = in.readLine()) != null) {
+			response.append(inputLine);
+		}
+		in.close();
+ 
+		System.out.println(response.toString());
+ 
 	}
 }
